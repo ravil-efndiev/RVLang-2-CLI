@@ -1,7 +1,6 @@
-#include <iostream>
+#include "cli/Cli.hpp"
 
 int main(int argc, char** argv)
 {
-    std::cout << "Test" << std::endl;
-    return 0;
+    return rvlang::Run(argc, argv);
 }

@@ -1,7 +1,10 @@
 cmake_minimum_required(VERSION 3.1)
 
-project(RVLangCli)
+project(RVLang)
 
-set(CMAKE_CXX_STANDART 20)
+add_executable(rvlang src/main.cpp src/System.cpp src/cli/Cli.cpp src/cli/Utils.cpp)
 
-add_executable(rvlang src/main.cpp)
+set_property(TARGET rvlang PROPERTY CXX_STANDARD 20)
+
+target_include_directories(rvlang PUBLIC .)
+target_include_directories(rvlang PUBLIC src/)
