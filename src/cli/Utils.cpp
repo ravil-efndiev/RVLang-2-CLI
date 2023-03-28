@@ -1,13 +1,14 @@
 #include "Utils.hpp"
 
+#include <interprieter/Token.hpp>
+
 namespace rvlang
 {
     namespace utils
     {
         std::string GetTextFromFile(const std::string &path)
         {
-            std::ifstream file;
-            file.open(path);
+            std::ifstream file (path, std::ios::in);
 
             if (!file.is_open())
             {
@@ -21,12 +22,20 @@ namespace rvlang
 
             while (std::getline(file, line))
             {
-                line.push_back('\n');
+                line.append("\n");
                 source.append(line);
             }
 
             file.close();
             return source;
+        }
+
+        void PrintTokens(const std::vector<Token> &tokens)
+        {
+            for (auto& token : tokens)
+            {
+                std::cout << "token \"" << token.Text << "\", type: " << token.Type.Name << std::endl;
+            }
         }
     }
 }

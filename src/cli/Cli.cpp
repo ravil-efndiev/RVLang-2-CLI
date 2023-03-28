@@ -1,5 +1,7 @@
 #include "Cli.hpp"
 
+#include "interprieter/Lexer.hpp"
+
 void PrintHelp()
 {
     rvlang::Log("Rvlang comand line toolchain: ");
@@ -39,8 +41,19 @@ void ParseArgs(std::vector<std::string> args)
         }
         else 
         {
-            auto source = rvlang::utils::GetTextFromFile(args[i]);
-            rvlang::Log(source);
+            try
+            {
+                auto source = rvlang::utils::GetTextFromFile(args[i]);
+                rvlang::Lexer lexer(source);
+
+                auto tokens = lexer.GetTokens();
+
+                rvlang::utils::PrintTokens(tokens);
+            }
+            catch (rvlang::Error error)
+            {
+                error.Print();
+            }
         }
     }
 }
