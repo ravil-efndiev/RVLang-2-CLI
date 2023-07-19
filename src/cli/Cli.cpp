@@ -18,7 +18,7 @@ void PrintVersion()
     rvlang::Log(RVLANG_VERSION);
 }
 
-void ParseArgs(std::vector<std::string> args) 
+void ParseArgs(const std::vector<std::string>& args) 
 {
     auto argc = args.size();
     for (int i = 1; i < argc; i++)

@@ -11,7 +11,8 @@
 #include <unordered_map>
 
 #include <memory>
-#include <functional>
+#include <variant>
+#include <algorithm>
 
 #define RVLANG_VERSION "dev 0.1"
 

@@ -83,6 +83,7 @@
         "stack": "cpp",
         "__tree": "cpp",
         "map": "cpp",
-        "regex": "cpp"
+        "regex": "cpp",
+        "variant": "cpp"
     }
 }
