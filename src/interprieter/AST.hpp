@@ -1,9 +1,8 @@
-#ifndef RVLANG_AST
-#define RVLANG_AST
+#pragma once
 
 #include <interprieter/Token.hpp>
 
-namespace rvlang
+namespace Rvlang
 {
     struct Node {};
 
@@ -42,4 +41,3 @@ namespace rvlang
     };
 }
 
-#endif

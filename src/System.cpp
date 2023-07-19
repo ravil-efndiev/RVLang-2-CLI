@@ -1,6 +1,6 @@
 #include "System.hpp"
 
-namespace rvlang
+namespace Rvlang
 {
     void Log(const std::string& text, const std::string& prefix, const std::string& prefixColor)
     {

@@ -2,64 +2,64 @@
 
 #include "interprieter/Lexer.hpp"
 
-void PrintHelp()
+namespace Rvlang
 {
-    rvlang::Log("Rvlang comand line toolchain: ");
-    rvlang::Log("rvlang [flags] <filename>", "Usage", COLOR_BLUE);
-    rvlang::Log("rvlang <single flag>", "\tOr");
-    rvlang::Log("", "Flags", COLOR_BLUE);
-    rvlang::Log("\t --help (aka -h)     open this list");
-    rvlang::Log("\t --version (aka -v)  see current rvlang version installed");
-}
-
-void PrintVersion()
-{
-    rvlang::Log("Current rvlang version installed: ");
-    rvlang::Log(RVLANG_VERSION);
-}
-
-void ParseArgs(const std::vector<std::string>& args) 
-{
-    auto argc = args.size();
-    for (int i = 1; i < argc; i++)
+    void PrintHelp()
     {
-        if (args[i][0] == '-')
+        Log("Rvlang comand line toolchain: ");
+        Log("rvlang [flags] <filename>", "Usage", COLOR_BLUE);
+        Log("rvlang <single flag>", "\tOr");
+        Log("", "Flags", COLOR_BLUE);
+        Log("\t --help (aka -h)     open this list");
+        Log("\t --version (aka -v)  see current rvlang version installed");
+    }
+
+    void PrintVersion()
+    {
+        Log("Current rvlang version installed: ");
+        Log(RVLANG_VERSION);
+    }
+
+    void ParseArgs(const std::vector<std::string>& args) 
+    {
+        auto argc = args.size();
+        for (int i = 1; i < argc; i++)
         {
-            if (args[i] == "--version" || args[i] == "-v")
+            if (args[i][0] == '-')
             {
-                if (argc > 2)
-                    throw rvlang::Error("--version flag must not have any aditional options");
-                PrintVersion();
-            }
+                if (args[i] == "--version" || args[i] == "-v")
+                {
+                    if (argc > 2)
+                        throw Error("--version flag must not have any aditional options");
+                    PrintVersion();
+                }
 
-            if (args[i] == "--help" || args[i] == "-h")
-            {
-                if (argc > 2)
-                    throw rvlang::Error("--help flag must not have any aditional options");
-                PrintHelp();
+                if (args[i] == "--help" || args[i] == "-h")
+                {
+                    if (argc > 2)
+                        throw Error("--help flag must not have any aditional options");
+                    PrintHelp();
+                }
             }
-        }
-        else 
-        {
-            try
+            else 
             {
-                auto source = rvlang::utils::GetTextFromFile(args[i]);
-                rvlang::Lexer lexer(source);
+                try
+                {
+                    auto source = Utils::GetTextFromFile(args[i]);
+                    Lexer lexer (source);
 
-                auto tokens = lexer.GetTokens();
+                    auto tokens = lexer.GetTokens();
 
-                rvlang::utils::PrintTokens(tokens);
-            }
-            catch (rvlang::Error error)
-            {
-                error.Print();
+                    Utils::PrintTokens(tokens);
+                }
+                catch (Error error)
+                {
+                    error.Print();
+                }
             }
         }
     }
-}
 
-namespace rvlang
-{
     status_t Run(int argc, char** argv)
     {
         try 

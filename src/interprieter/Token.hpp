@@ -1,9 +1,8 @@
-#ifndef RVLANG_TOKEN_HPP
-#define RVLANG_TOKEN_HPP
+#pragma once
 
 #include "TokenType.hpp"
 
-namespace rvlang
+namespace Rvlang
 {
     struct Token
     {
@@ -14,4 +13,3 @@ namespace rvlang
     };
 }
 
-#endif

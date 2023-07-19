@@ -1,10 +1,10 @@
 #include "Parser.hpp"
 
-namespace rvlang
+namespace Rvlang
 {
     Parser::Parser(const std::vector<Token>& tokens)  : m_Tokens(tokens), m_Position(0)
     {
-        m_Tokens.erase(std::remove_if(m_Tokens.begin(), m_Tokens.end(), [](const Token& token){return token.Type == TypeList["space"];}));
+        m_Tokens.erase(std::remove_if(m_Tokens.begin(), m_Tokens.end(), [](const Token& token){return token.Type == TypeList[SPACE];}));
     }
 
     Parser::~Parser() {}
@@ -46,7 +46,7 @@ namespace rvlang
         while (m_Position < m_Tokens.size())
         {
             std::shared_ptr<Node> lineNode = ParseLine();
-            Require(TypeList["semicolon"]);
+            Require(TypeList[SEMICOLON]);
             mainNode.AddNode(lineNode.get());
         }
 
@@ -55,10 +55,10 @@ namespace rvlang
 
     std::shared_ptr<Node> Parser::ParseLine()
     {
-        if (std::holds_alternative<Token>(Find(TypeList["var_keyword"])))
+        if (std::holds_alternative<Token>(Find(TypeList[VAR])))
         {
             auto varNode = ParseVariable();
-            auto assignOperator = Require(TypeList["assign_operator"]);
+            auto assignOperator = Require(TypeList[ASSIGN]);
             auto formulaNode = ParseFormula();
 
             auto assign = std::make_shared<BinaryOperationNode>(assignOperator, varNode.get(), formulaNode.get());
@@ -68,7 +68,7 @@ namespace rvlang
 
     std::shared_ptr<Node> Parser::ParseVariable()
     {
-        Token nameToken = Require(TypeList["name"]);
+        Token nameToken = Require(TypeList[NAME]);
         return std::make_shared<VariableNode>(nameToken);
     }
 

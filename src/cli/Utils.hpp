@@ -1,13 +1,12 @@
-#ifndef RVLANG_UTILS_HPP
-#define RVLANG_UTILS_HPP
+#pragma once
 
 #include "System.hpp"
 
-namespace rvlang
+namespace Rvlang
 {
     class Token;
 
-    namespace utils
+    namespace Utils
     {
         extern std::string GetTextFromFile(const std::string& path);
 
@@ -15,4 +14,3 @@ namespace rvlang
     }
 }
 
-#endif

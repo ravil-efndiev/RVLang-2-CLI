@@ -1,33 +1,26 @@
 #include "Lexer.hpp"
 
-namespace rvlang
+namespace Rvlang
 {
     Lexer::Lexer(const std::string& code)
     {
         m_Code = code;
     }
 
-    Lexer::~Lexer()
-    {
-    }
+    Lexer::~Lexer() {}
 
     std::vector<Token> Lexer::GetTokens()
     {
-        while (NextToken())
+        while (m_Position < m_Code.size())
         {
-            Log("found token");
+            NextToken();
         }
 
         return m_Tokens;
     }
 
-    bool Lexer::NextToken()
+    void Lexer::NextToken()
     {
-        if (m_Position >= m_Code.size())
-        {
-            return false;
-        }
-
         for (auto& type : TypeList)
         {
             auto regexp = std::regex(type.second.Regex);
@@ -40,7 +33,8 @@ namespace rvlang
                 Token token (type.second, result.str());
                 m_Position += result.str().size();
                 m_Tokens.push_back(token);
-                return true;
+                
+                return;
             }
         }
         throw Error("invalid token");

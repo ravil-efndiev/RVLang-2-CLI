@@ -2,9 +2,9 @@
 
 #include <interprieter/Token.hpp>
 
-namespace rvlang
+namespace Rvlang
 {
-    namespace utils
+    namespace Utils
     {
         std::string GetTextFromFile(const std::string &path)
         {

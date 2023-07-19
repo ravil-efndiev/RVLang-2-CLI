@@ -1,9 +1,8 @@
-#ifndef RVLANG_LEXER_HPP
-#define RVLANG_LEXER_HPP
+#pragma once
 
 #include "Token.hpp"
 
-namespace rvlang
+namespace Rvlang
 {
     class Lexer
     {
@@ -18,9 +17,8 @@ namespace rvlang
         std::vector<Token> m_Tokens;
         int m_Position = 0;
 
-        bool NextToken();
+        void NextToken();
 
     };
 }
 
-#endif

@@ -1,10 +1,9 @@
-#ifndef RVL_PARSER_HPP
-#define RVL_PARSER_HPP
+#pragma once
 
 #include "AST.hpp"
 #include "TokenType.hpp"
 
-namespace rvlang
+namespace Rvlang
 {
     class Parser
     {
@@ -31,4 +30,3 @@ namespace rvlang
     };
 }
 
-#endif

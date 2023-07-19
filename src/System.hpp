@@ -1,5 +1,4 @@
-#ifndef RVLANG_SYSTEM_HPP
-#define RVLANG_SYSTEM_HPP
+#pragma once
 
 #include <iostream>
 #include <fstream>
@@ -30,7 +29,7 @@
 #define COLOR_YELLOW "\033[93m"
 #define COLOR_BLUE   "\033[94m"
 
-namespace rvlang 
+namespace Rvlang 
 {
     /**
      * @brief Standart rvlang cli log function to log data
@@ -59,4 +58,3 @@ namespace rvlang
 
 }
 
-#endif
