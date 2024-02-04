@@ -1,16 +1,17 @@
 #include "Parser.hpp"
+#include "cli/Utils.hpp"
 
 namespace Rvlang
 {
     Parser::Parser(const std::vector<Token>& tokens)  : m_Tokens(tokens), m_Position(0)
     {
-        m_Tokens.erase(std::remove_if(m_Tokens.begin(), m_Tokens.end(), [](const Token& token){return token.Type == TypeList[SPACE];}));
+        m_Tokens.erase(std::remove_if(m_Tokens.begin(), m_Tokens.end(), [](const Token& token){return token.Type == typeList[SPACE];}), m_Tokens.end());
     }
 
     Parser::~Parser() {}
 
     template <class... Types>
-    std::variant<Token, std::nullptr_t> Parser::Find(const Types&... types)
+    std::optional<Token> Parser::Find(const Types&... types)
     {
         std::vector<TokenType> params = { { types... } };
         if (m_Position < m_Tokens.size())
@@ -22,7 +23,7 @@ namespace Rvlang
                 return currentToken;
             }
         }
-        return nullptr;
+        return std::nullopt;
     }
 
     template <class... Types>
@@ -30,7 +31,7 @@ namespace Rvlang
     {
         try
         {    
-            Token token = std::get<Token>(Find(types...));
+            Token token = *Find(types...);
             return token;
         }
         catch (const std::bad_variant_access& ex)
@@ -39,40 +40,119 @@ namespace Rvlang
         }
     }
 
-    StatementsNode Parser::Parse()
+    Ptr<StatementsNode> Parser::Parse()
     {
-        StatementsNode mainNode;
+        Ptr<StatementsNode> mainNode = New<StatementsNode>();
 
         while (m_Position < m_Tokens.size())
         {
-            std::shared_ptr<Node> lineNode = ParseLine();
-            Require(TypeList[SEMICOLON]);
-            mainNode.AddNode(lineNode.get());
+            Ptr<Node> lineNode = ParseLine();
+            mainNode->AddNode(lineNode);
         }
 
         return mainNode;
     }
 
-    std::shared_ptr<Node> Parser::ParseLine()
+    Ptr<Node> Parser::ParseLine()
     {
-        if (std::holds_alternative<Token>(Find(TypeList[VAR])))
+        // variable declaration
+        if (Find(typeList[VAR]))
         {
-            auto varNode = ParseVariable();
-            auto assignOperator = Require(TypeList[ASSIGN]);
-            auto formulaNode = ParseFormula();
+            auto varNode = New<VariableNode>(Require(typeList[NAME]));
+            auto assignOperator = Find(typeList[ASSIGN]);
 
-            auto assign = std::make_shared<BinaryOperationNode>(assignOperator, varNode.get(), formulaNode.get());
-            return assign;
+            if (assignOperator)
+            {
+                auto formulaNode = ParseExpression();
+
+                if (!formulaNode) throw Error("No valid rvalue found during variable assignment");
+
+                auto assign = New<BinaryOperationNode>(*assignOperator, varNode, *formulaNode);
+                return assign;
+            }
+
+            auto null = New<ValueNode>(Token(), NodeType::Null);
+            return New<BinaryOperationNode>(Token(typeList[ASSIGN], "="), varNode, null);
+        }
+
+        // line starts with usable name
+        auto startName = Find(typeList[NAME]);
+        if (startName)
+        {
+            Token name = *startName;
+            
+            // name is function call
+            if ((Find(typeList[LPAR])))
+            {
+                auto args = ParseMultipleValues();
+                auto functionCall = New<FunctionCallNode>(name, args);
+                Require(typeList[RPAR]);
+                return functionCall;
+            }
         }
     }
 
-    std::shared_ptr<Node> Parser::ParseVariable()
+    std::optional<Ptr<Node>> Parser::ParseUsable()
     {
-        Token nameToken = Require(TypeList[NAME]);
-        return std::make_shared<VariableNode>(nameToken);
+        auto nameToken = Find(typeList[NAME]);
+        if (nameToken) return New<VariableNode>(*nameToken);
+
+        auto numberToken = Find(typeList[INTEGER], typeList[FLOAT]);
+        if (numberToken) return New<ValueNode>(*numberToken, NodeType::Number);
+
+        auto stringToken = Find(typeList[STRING]);
+        if (stringToken) return New<ValueNode>(*stringToken, NodeType::String);
+
+        return std::nullopt;
     }
 
-    std::shared_ptr<Node> Parser::ParseFormula()
+    std::optional<Ptr<Node>> Parser::ParseExpression()
     {
+        auto left = ParseParenthases();
+
+        auto op = Find(typeList[PLUS], typeList[MINUS], typeList[MULT], typeList[DIV]);
+        while (op)
+        {
+            auto right = ParseParenthases();
+            if (!left || !right) throw Error("No valid value found during binary operation");
+            left = New<BinaryOperationNode>(*op, *left, *right);
+            op = Find(typeList[PLUS], typeList[MINUS], typeList[MULT], typeList[DIV]);
+        }
+        return left;
+    }
+    
+    std::optional<Ptr<Node>> Parser::ParseParenthases()
+    {
+        if (Find(typeList[LPAR]))
+        {
+            auto expression = ParseExpression();
+            Require(typeList[RPAR]);
+            return expression;
+        }
+
+        return ParseUsable();
+    }
+    
+    std::vector<Ptr<Node>> Parser::ParseMultipleValues()
+    {
+        auto value = ParseExpression();
+        if (!value) 
+            return {};
+
+        auto op = Find(typeList[COMMA]);
+        if (!op)
+            return {*value};
+        
+        std::vector<Ptr<Node>> values = {*value};
+
+        while ((op))
+        {
+            auto next = ParseExpression();
+            if (!next) throw Error("Valid value not found after ','");
+            values.push_back(*next);
+            op = Find(typeList[COMMA]);
+        }
+
+        return values;
     }
 }

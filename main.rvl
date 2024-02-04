@@ -1,2 +1,2 @@
-lol = 10;
-
+var lol = 33
+print(lol)

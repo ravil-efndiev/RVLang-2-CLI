@@ -11,7 +11,7 @@ namespace Rvlang
         Parser(const std::vector<Token>& tokens);
         ~Parser();
 
-        StatementsNode Parse();
+        Ptr<StatementsNode> Parse();
 
 
     private:
@@ -19,14 +19,16 @@ namespace Rvlang
         int m_Position;
 
         template <class ... Types>
-        std::variant<Token, std::nullptr_t> Find(const Types&... types);
+        std::optional<Token> Find(const Types&... types);
 
         template <class ... Types>
         Token Require(const Types&... types);
 
-        std::shared_ptr<Node> ParseLine();
-        std::shared_ptr<Node> ParseVariable();
-        std::shared_ptr<Node> ParseFormula();
+        Ptr<Node>                ParseLine();
+        std::optional<Ptr<Node>> ParseUsable();
+        std::optional<Ptr<Node>> ParseExpression();
+        std::optional<Ptr<Node>> ParseParenthases();
+        std::vector<Ptr<Node>>   ParseMultipleValues();
     };
 }
 

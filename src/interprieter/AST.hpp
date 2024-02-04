@@ -4,40 +4,76 @@
 
 namespace Rvlang
 {
-    struct Node {};
-
-    struct StatementsNode : public Node
+    enum class NodeType 
     {
-        std::vector<Node*> Lines;
+        Statements, Variable, Number, BinaryOperation, FunctionCall, String, Null
+    };
 
-        void AddNode(Node* node)
+    class Node 
+    {
+    public:
+        virtual NodeType GetType() = 0;
+    };
+
+    struct StatementsNode final : public Node
+    {
+        std::vector<Ptr<Node>> Lines;
+
+        StatementsNode() {}
+        
+        NodeType GetType() override {return NodeType::Statements;}
+
+        void AddNode(const Ptr<Node>& node)
         {
             Lines.push_back(node);
         }
     };
 
-    struct VariableNode : public Node
+    struct VariableNode final : public Node
     {
         Token Name;
 
         VariableNode(const Token& name) : Name(name) {}
+        NodeType GetType() override {return NodeType::Variable;}
     };
 
-    struct NumberNode : public Node
+    struct ValueNode final : public Node
     {
-        Token Number;
+        Token Value;
+        NodeType ValueType; // only Number, String, Null are valid
 
-        NumberNode(const Token& number) : Number(number) {}
+        ValueNode(const Token& value, NodeType type) : Value(value) 
+        {
+            if (type != NodeType::Number && type != NodeType::String && type != NodeType::Null)
+                throw Error("Value node can only have value types");
+            ValueType = type;    
+        }
+
+        NodeType GetType() override {return ValueType;}
     };
-
-    struct BinaryOperationNode : public Node
+    
+    struct BinaryOperationNode final : public Node
     {
         Token Operator;
-        Node* LeftNode;   
-        Node* RightNode;
+        Ptr<Node> LeftNode;   
+        Ptr<Node> RightNode;
 
-        BinaryOperationNode(const Token& op, Node* left, Node* right)
+        BinaryOperationNode(const Token& op, const Ptr<Node>& left, const Ptr<Node>& right)
             : Operator(op), LeftNode(left), RightNode(right) {}  
+
+        NodeType GetType() override {return NodeType::BinaryOperation;}
+        
+    };
+
+    struct FunctionCallNode final : public Node
+    {
+        Token FunctionName;
+        std::vector<Ptr<Node>> Arguments;
+
+        FunctionCallNode(const Token& functionName, const std::vector<Ptr<Node>>& args) 
+            : FunctionName(functionName), Arguments(args) {}
+
+        NodeType GetType() override {return NodeType::FunctionCall;}
     };
 }
 

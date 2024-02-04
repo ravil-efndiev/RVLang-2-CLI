@@ -21,19 +21,19 @@ namespace Rvlang
 
     void Lexer::NextToken()
     {
-        for (auto& type : TypeList)
+        for (auto& type : typeList.Get())
         {
             auto regexp = std::regex(type.second.Regex);
             auto currentString = m_Code.substr(m_Position);
 
-            std::smatch result;
+            std::smatch result; 
 
             if (std::regex_search(currentString, result, regexp)) 
             {
                 Token token (type.second, result.str());
                 m_Position += result.str().size();
                 m_Tokens.push_back(token);
-                
+            
                 return;
             }
         }

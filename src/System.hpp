@@ -11,7 +11,10 @@
 
 #include <memory>
 #include <variant>
+#include <optional>
 #include <algorithm>
+#include <functional>
+#include <any>
 
 #define RVLANG_VERSION "dev 0.1"
 
@@ -56,5 +59,13 @@ namespace Rvlang
         }
     };
 
+    template <class T>
+    using Ptr = std::shared_ptr<T>;
+
+    template <class T, class... Args>
+    Ptr<T> New(Args&&... args)
+    {
+        return std::make_shared<T>(args...);
+    }
 }
 
