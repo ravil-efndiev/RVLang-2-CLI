@@ -106,7 +106,7 @@ namespace Rvlang
         return std::nullopt;
     }
 
-    std::optional<Ptr<Node>> Parser::ParseExpression(std::optional<Ptr<Node>> start)
+    std::optional<Ptr<Node>> Parser::ParseExpression()
     {
         auto left = ParseParenthases();
 
