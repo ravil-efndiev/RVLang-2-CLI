@@ -106,17 +106,26 @@ namespace Rvlang
         return std::nullopt;
     }
 
-    std::optional<Ptr<Node>> Parser::ParseExpression()
+    std::optional<Ptr<Node>> Parser::ParseExpression(std::optional<Ptr<Node>> start)
     {
         auto left = ParseParenthases();
 
-        auto op = Find(typeList[PLUS], typeList[MINUS], typeList[MULT], typeList[DIV]);
-        while (op)
+        auto divMultOp = Find(typeList[MULT], typeList[DIV]);
+        while (divMultOp)
         {
             auto right = ParseParenthases();
             if (!left || !right) throw Error("No valid value found during binary operation");
-            left = New<BinaryOperationNode>(*op, *left, *right);
-            op = Find(typeList[PLUS], typeList[MINUS], typeList[MULT], typeList[DIV]);
+            left = New<BinaryOperationNode>(*divMultOp, *left, *right);
+            divMultOp = Find(typeList[MULT], typeList[DIV]);
+        }
+
+        auto plusMinusOp = Find(typeList[PLUS], typeList[MINUS]);
+        while (plusMinusOp)
+        {
+            auto right = ParseExpression();
+            if (!left || !right) throw Error("No valid value found during binary operation");
+            left = New<BinaryOperationNode>(*plusMinusOp, *left, *right);
+            plusMinusOp = Find(typeList[PLUS], typeList[MINUS]);
         }
         return left;
     }

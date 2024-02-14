@@ -1,2 +1,5 @@
-var lol = 33
-print(lol)
+var kek = 24
+
+var lol = kek
+print(2 * (2 + 2))
+ 

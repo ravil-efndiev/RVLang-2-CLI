@@ -26,7 +26,7 @@ namespace Rvlang
 
         Ptr<Node>                ParseLine();
         std::optional<Ptr<Node>> ParseUsable();
-        std::optional<Ptr<Node>> ParseExpression();
+        std::optional<Ptr<Node>> ParseExpression(std::optional<Ptr<Node>> start = std::nullopt);
         std::optional<Ptr<Node>> ParseParenthases();
         std::vector<Ptr<Node>>   ParseMultipleValues();
     };
