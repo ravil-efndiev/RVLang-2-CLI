@@ -89,7 +89,9 @@
         "map": "cpp",
         "regex": "cpp",
         "variant": "cpp",
-        "any": "cpp"
+        "any": "cpp",
+        "__memory": "cpp",
+        "filesystem": "cpp"
     },
     "workbench.iconTheme": "material-icon-theme"
 }

@@ -1,5 +1,42 @@
-var kek = 24
+import (io sys)
 
-var lol = kek
-print(2 * (2 + 2))
- 
+type vec2 {
+    int x
+    int y
+}
+
+const WIDTH = 20
+const HEIGHT = 20
+
+func render(pos: vec2*, c: char) {
+    loop y: 0..HEIGHT {
+        loop x: 0..WIDTH {
+            if x == pos.x ^ y == pos.y 
+                print "{c}"
+            else
+                print "."
+        }
+        print "\n"
+    }
+}
+
+func main {
+    var pos = vec2.new(10, 5)
+    
+    loop {
+        var key = to_keychar(readkey())
+
+        match key {
+            'w' -> pos.y--
+            's' -> pos.y++
+            'a' -> pos.x--
+            'd' -> pos.x++
+            'q' -> stop
+        }
+
+        render pos, '@'
+        
+        @unix sys_command "clear"  
+        @windows sys_command "cls"
+    }
+}

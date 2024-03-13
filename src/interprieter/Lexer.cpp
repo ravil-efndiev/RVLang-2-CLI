@@ -23,14 +23,14 @@ namespace Rvlang
     {
         for (auto& type : typeList.Get())
         {
-            auto regexp = std::regex(type.second.Regex);
+            auto regexp = std::regex(type.Regex);
             auto currentString = m_Code.substr(m_Position);
 
             std::smatch result; 
 
             if (std::regex_search(currentString, result, regexp)) 
             {
-                Token token (type.second, result.str());
+                Token token (type, result.str());
                 m_Position += result.str().size();
                 m_Tokens.push_back(token);
             

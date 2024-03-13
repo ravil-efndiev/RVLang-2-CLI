@@ -36,7 +36,7 @@ namespace Rvlang
 {
     /**
      * @brief Standart rvlang cli log function to log data
-     * @param text actual text to print
+     * @param text text to print
      * @param prefix optional parameter to specify prefix, it is text (mostly one word describing line) before actual text followed by semicolon
      * @param prefixColor optional parameter to specify prefix color
      */

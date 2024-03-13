@@ -58,7 +58,7 @@ namespace Rvlang
         // variable declaration
         if (Find(typeList[VAR]))
         {
-            auto varNode = New<VariableNode>(Require(typeList[NAME]));
+            auto varNode = New<VariableNode>(Require(typeList[NAME]).Text);
             auto assignOperator = Find(typeList[ASSIGN]);
 
             if (assignOperator)
@@ -71,7 +71,7 @@ namespace Rvlang
                 return assign;
             }
 
-            auto null = New<ValueNode>(Token(), NodeType::Null);
+            auto null = New<NullNode>();
             return New<BinaryOperationNode>(Token(typeList[ASSIGN], "="), varNode, null);
         }
 
@@ -85,23 +85,52 @@ namespace Rvlang
             if ((Find(typeList[LPAR])))
             {
                 auto args = ParseMultipleValues();
-                auto functionCall = New<FunctionCallNode>(name, args);
+                auto functionCall = New<FunctionCallNode>(name.Text, args);
                 Require(typeList[RPAR]);
                 return functionCall;
             }
         }
-    }
 
+        // line starts with `func` keyword
+        if (Find(typeList[FUNC]))
+        {
+            auto name = Require(typeList[NAME]);
+
+            std::vector<Ptr<Node>> args;
+            if (Find(typeList[LPAR])) 
+            {
+                args = ParseMultipleValues();
+                Require(typeList[RPAR]);
+            }
+
+            auto proto = New<FunctionPrototypeNode>(name.Text, args);
+
+            if (Find(typeList[LBRACE])) {
+                Ptr<StatementsNode> code = ParseCodeBlock();
+
+                auto declaration = New<FunctionDeclNode>(proto, code);
+                return declaration;
+            }
+            return proto;
+        }
+    }
+    
     std::optional<Ptr<Node>> Parser::ParseUsable()
     {
         auto nameToken = Find(typeList[NAME]);
-        if (nameToken) return New<VariableNode>(*nameToken);
+        if (nameToken) return New<VariableNode>(nameToken->Text);
 
-        auto numberToken = Find(typeList[INTEGER], typeList[FLOAT]);
-        if (numberToken) return New<ValueNode>(*numberToken, NodeType::Number);
+        auto intToken = Find(typeList[INTEGER]);
+        if (intToken) return New<NumberNode>(*intToken, NumberType::i32);
+
+        auto floatToken = Find(typeList[FLOAT]);
+        if (floatToken) return New<NumberNode>(*floatToken, NumberType::f32);
 
         auto stringToken = Find(typeList[STRING]);
-        if (stringToken) return New<ValueNode>(*stringToken, NodeType::String);
+        if (stringToken) return New<StringLiteralNode>(stringToken->Text);
+
+        auto nullToken = Find(typeList[NULL_]);
+        if (nullToken) return New<NullNode>();
 
         return std::nullopt;
     }
@@ -164,4 +193,19 @@ namespace Rvlang
 
         return values;
     }
+
+    Ptr<StatementsNode> Parser::ParseCodeBlock()
+    {
+        auto block = New<StatementsNode>();
+
+        auto rbrace = Find(typeList[RBRACE]);
+        while (!rbrace)
+        {
+            Ptr<Node> lineNode = ParseLine();
+            block->AddNode(lineNode);
+        }
+
+        return block;
+    }
+
 }

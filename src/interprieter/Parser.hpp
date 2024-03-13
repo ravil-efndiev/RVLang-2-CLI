@@ -29,6 +29,7 @@ namespace Rvlang
         std::optional<Ptr<Node>> ParseExpression();
         std::optional<Ptr<Node>> ParseParenthases();
         std::vector<Ptr<Node>>   ParseMultipleValues();
+        Ptr<StatementsNode>      ParseCodeBlock();
     };
 }
 
