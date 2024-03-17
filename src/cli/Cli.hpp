@@ -4,7 +4,7 @@
 
 namespace Rvlang
 {   
-    typedef unsigned int status_t;
+    typedef unsigned short status_t;
 
     extern status_t Run(int argc, char** argv);   
 }

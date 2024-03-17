@@ -8,7 +8,7 @@ type vec2 {
 const WIDTH = 20
 const HEIGHT = 20
 
-func render(pos: vec2*, c: char) {
+func render(vec2* pos, char c) {
     loop y: 0..HEIGHT {
         loop x: 0..WIDTH {
             if x == pos.x ^ y == pos.y 
@@ -18,6 +18,10 @@ func render(pos: vec2*, c: char) {
         }
         print "\n"
     }
+}
+
+func calc(i32 a, i32 b) -> i32 {
+    [a + b]
 }
 
 func main {

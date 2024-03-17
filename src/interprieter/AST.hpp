@@ -1,28 +1,9 @@
 #pragma once
-#include <interprieter/Token.hpp>
+#include "Token.hpp"
+#include "DataTypes.hpp"
 
 namespace Rvlang
 {
-    enum class NodeType 
-    {
-        Statements,
-        Variable,
-        Number, 
-        BinaryOperation, 
-        FunctionCall, 
-        FunctionProto, 
-        FunctionDecl, 
-        String, 
-        Null
-    };
-
-    enum class NumberType
-    {
-        u8, u16, u32, u64,
-        i8, i16, i32, i64,
-        f32, f64
-    };
-
     class Node 
     {
     public:
@@ -31,12 +12,11 @@ namespace Rvlang
 
     struct StatementsNode final : public Node
     {
-        std::vector<Ptr<Node>> Lines;
+        std::vector<std::shared_ptr<Node>> Lines;
 
-        StatementsNode() {}
         NodeType GetType() override {return NodeType::Statements;}
 
-        void AddNode(const Ptr<Node>& node)
+        void AddNode(const std::shared_ptr<Node>& node)
         {
             Lines.push_back(node);
         }
@@ -47,6 +27,17 @@ namespace Rvlang
         std::string Name;
 
         VariableNode(const std::string& name) : Name(name) {}
+        NodeType GetType() override {return NodeType::Variable;}
+    };
+
+    struct VariableDeclNode final : public Node
+    {
+        std::string Name;
+        std::shared_ptr<Node> InitialValue;
+        VariableType Type;
+
+        VariableDeclNode(const std::string& name, const std::shared_ptr<Node>& initialValue, VariableType type = VariableType::DeductLater) 
+            : Name(name), InitialValue(initialValue), Type(type) {}
         NodeType GetType() override {return NodeType::Variable;}
     };
 
@@ -78,22 +69,21 @@ namespace Rvlang
     struct BinaryOperationNode final : public Node
     {
         Token Operator;
-        Ptr<Node> LeftNode;   
-        Ptr<Node> RightNode;
+        std::shared_ptr<Node> LeftNode;   
+        std::shared_ptr<Node> RightNode;
 
-        BinaryOperationNode(const Token& op, const Ptr<Node>& left, const Ptr<Node>& right)
+        BinaryOperationNode(const Token& op, const std::shared_ptr<Node>& left, const std::shared_ptr<Node>& right)
             : Operator(op), LeftNode(left), RightNode(right) {}  
 
         NodeType GetType() override {return NodeType::BinaryOperation;}
-        
     };
 
     struct FunctionCallNode final : public Node
     {
         std::string FunctionName;
-        std::vector<Ptr<Node>> Arguments;
+        std::vector<std::shared_ptr<Node>> Arguments;
 
-        FunctionCallNode(const std::string& functionName, const std::vector<Ptr<Node>>& args) 
+        FunctionCallNode(const std::string& functionName, const std::vector<std::shared_ptr<Node>>& args) 
             : FunctionName(functionName), Arguments(args) {}
 
         NodeType GetType() override {return NodeType::FunctionCall;}
@@ -102,20 +92,21 @@ namespace Rvlang
     struct FunctionPrototypeNode final : public Node
     {
         std::string FunctionName;
-        std::vector<Ptr<Node>> Arguments;
+        VariableType ReturnType;
+        std::vector<std::shared_ptr<VariableDeclNode>> Arguments;
 
-        FunctionPrototypeNode(const std::string& name, std::vector<Ptr<Node>> args)
-            : FunctionName(name), Arguments(std::move(args)) {}
+        FunctionPrototypeNode(const std::string& name, std::vector<std::shared_ptr<VariableDeclNode>> args, VariableType type)
+            : FunctionName(name), Arguments(std::move(args)), ReturnType(type) {}
 
         NodeType GetType() override {return NodeType::FunctionProto;}
     };
 
     struct FunctionDeclNode final : public Node
     {
-        Ptr<StatementsNode> Code;
-        Ptr<FunctionPrototypeNode> Proto;
+        std::shared_ptr<StatementsNode> Code;
+        std::shared_ptr<FunctionPrototypeNode> Proto;
 
-        FunctionDeclNode(const Ptr<FunctionPrototypeNode>& proto, const Ptr<StatementsNode>& code)
+        FunctionDeclNode(const std::shared_ptr<FunctionPrototypeNode>& proto, const std::shared_ptr<StatementsNode>& code)
             : Proto(proto), Code(code) {}
 
         NodeType GetType() override {return NodeType::FunctionDecl;}

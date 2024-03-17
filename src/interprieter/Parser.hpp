@@ -11,25 +11,28 @@ namespace Rvlang
         Parser(const std::vector<Token>& tokens);
         ~Parser();
 
-        Ptr<StatementsNode> Parse();
-
+        std::shared_ptr<StatementsNode> Parse();
 
     private:
         std::vector<Token> m_Tokens;
         int m_Position;
 
-        template <class ... Types>
+        template <class... Types>
         std::optional<Token> Find(const Types&... types);
 
-        template <class ... Types>
-        Token Require(const Types&... types);
+        Token Require(const TokenType& type);
 
-        Ptr<Node>                ParseLine();
-        std::optional<Ptr<Node>> ParseUsable();
-        std::optional<Ptr<Node>> ParseExpression();
-        std::optional<Ptr<Node>> ParseParenthases();
-        std::vector<Ptr<Node>>   ParseMultipleValues();
-        Ptr<StatementsNode>      ParseCodeBlock();
+        std::shared_ptr<VariableDeclNode> ParseVariableDeclTyped();
+        std::shared_ptr<VariableDeclNode> ParseVariableDeclUntyped();
+
+        std::shared_ptr<Node> ParseLine();
+        std::shared_ptr<Node> ParseUsable();
+        std::shared_ptr<Node> ParseExpression();
+        std::shared_ptr<Node> ParseParenthases();
+        
+        std::vector<std::shared_ptr<Node>> ParseMultipleValues();
+        std::shared_ptr<StatementsNode> ParseCodeBlock();
+        std::vector<std::shared_ptr<VariableDeclNode>> ParseFunctionArgs();
     };
 }
 

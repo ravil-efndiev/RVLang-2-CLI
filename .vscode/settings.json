@@ -91,7 +91,9 @@
         "variant": "cpp",
         "any": "cpp",
         "__memory": "cpp",
-        "filesystem": "cpp"
+        "filesystem": "cpp",
+        "shared_mutex": "cpp",
+        "__functional_base_03": "cpp"
     },
     "workbench.iconTheme": "material-icon-theme"
 }

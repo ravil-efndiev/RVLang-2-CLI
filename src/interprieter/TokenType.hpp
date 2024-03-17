@@ -1,5 +1,4 @@
 #pragma once
-
 #include <System.hpp>
 
 namespace Rvlang
@@ -8,6 +7,7 @@ namespace Rvlang
     {
         UNDEFINED = 0,
         NAME,      
+        TYPE,  
         INTEGER, FLOAT, STRING,
         SPACE,
         COMMA,
@@ -16,6 +16,7 @@ namespace Rvlang
         LPAR, RPAR,     
         LBRACE, RBRACE,
         PLUS, MINUS, MULT, DIV,  
+        ARROW,  
         NULL_,
     };
 
@@ -53,9 +54,11 @@ namespace Rvlang
                 TokenType(FLOAT, R"(^-?\b[0-9]+\.[0-9]+\b)"),
                 TokenType(SPACE, ("^\\s+")),
                 TokenType(ASSIGN, ("^\\=")),
+                TokenType(ARROW, "^->"),
                 TokenType(VAR, ("^var")),
                 TokenType(FUNC, "^func"),
                 TokenType(NULL_, "^Null"),
+                TokenType(TYPE, "^(i32|f32|string)"),
                 TokenType(NAME, ("^[_|A-Z|a-z]+[_|A-Z|a-z|0-9]+")),
                 TokenType(LPAR, ("^\\(")),
                 TokenType(RPAR, ("^\\)")),

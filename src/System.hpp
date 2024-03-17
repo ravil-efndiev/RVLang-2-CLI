@@ -16,12 +16,24 @@
 #include <functional>
 #include <any>
 
+#include <llvm/ADT/APFloat.h>
+#include <llvm/ADT/STLExtras.h>
+#include <llvm/IR/BasicBlock.h>
+#include <llvm/IR/Constants.h>
+#include <llvm/IR/DerivedTypes.h>
+#include <llvm/IR/Function.h>
+#include <llvm/IR/IRBuilder.h>
+#include <llvm/IR/LLVMContext.h>
+#include <llvm/IR/Module.h>
+#include <llvm/IR/Type.h>
+#include <llvm/IR/Verifier.h>
+
 #define RVLANG_VERSION "dev 0.1"
 
 //statuses
 
-#define RVLANG_SUCCESS 0;
-#define RVLANG_ERROR   1;
+#define RVLANG_SUCCESS 0
+#define RVLANG_ERROR   1
 
 //colors
 
@@ -58,14 +70,5 @@ namespace Rvlang
             std::cerr << COLOR_RED << "Error: " << COLOR_NONE << Text << std::endl;
         }
     };
-
-    template <class T>
-    using Ptr = std::shared_ptr<T>;
-
-    template <class T, class... Args>
-    Ptr<T> New(Args&&... args)
-    {
-        return std::make_shared<T>(args...);
-    }
 }
 

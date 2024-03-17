@@ -2,7 +2,6 @@
 
 #include "interprieter/Lexer.hpp"
 #include "interprieter/Parser.hpp"
-#include "interprieter/Runtime.hpp"
 
 namespace Rvlang
 {
@@ -55,7 +54,6 @@ namespace Rvlang
                     Utils::PrintTokens(tokens);
 
                     Parser parser (tokens);
-                    Runtime::Run(parser.Parse());
                 }
                 catch (Error error)
                 {
